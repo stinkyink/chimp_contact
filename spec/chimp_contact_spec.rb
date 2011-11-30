@@ -19,6 +19,7 @@ module ChimpContact
     def convert
       strip_mail_chimp_attributes
       insert_copyright
+      remove_footer
       @document
     end
     
@@ -33,13 +34,18 @@ module ChimpContact
       copyright_tag.content = COPYRIGHT.join("\n")
       body_tag.add_next_sibling(copyright_tag)
     end
+    
+    def remove_footer
+      footer = @document.css("#footer")
+      footer.remove
+    end
   end
 end
 
 describe ChimpContact::Convertor do
   
   let :convertor do
-    ChimpContact::Convertor.new(Nokogiri::HTML("<a href='#' mc:editable='link'></a>"))
+    ChimpContact::Convertor.new(Nokogiri::HTML("<a href='#' mc:editable='link'></a><div id='footer'>"))
   end
 
   subject {convertor.convert.to_html}
@@ -50,5 +56,9 @@ describe ChimpContact::Convertor do
   
   it 'should add the copyright tag just after the body tag' do
     should include("<CopyRight>")
+  end
+  
+  it 'should remove the footer div' do
+    should_not include('<div id="footer">')
   end
 end
