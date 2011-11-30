@@ -5,11 +5,11 @@ require "chimp_contact/version"
 Gem::Specification.new do |s|
   s.name        = "chimp_contact"
   s.version     = ChimpContact::VERSION
-  s.authors     = ["Robert Williams"]
-  s.email       = ["rob@r-williams.com"]
+  s.authors     = ["Robert Williams", "Andrew Warburton"]
+  s.email       = ["rob@r-williams.com", "andy@warburton.me"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Converts mailchimp templates to constant contact format}
+  s.description = %q{Converts mailchimp templates to constant contact format but more verbose}
 
   s.rubyforge_project = "chimp_contact"
 
