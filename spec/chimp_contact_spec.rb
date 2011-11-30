@@ -3,28 +3,32 @@ require 'nokogiri'
 module ChimpContact
   
   class Convertor
+    
     def initialize(document)
       @document = document
-    end  
-  end
-  
-  class StripMailChimpAttributes < Convertor
-    def run
-      @document.xpath('//*').each { |e| e.attributes.each { |k,v| v.remove if k =~ /^mc/ } }
+    end
+    
+    def convert
+      strip_mail_chimp_attributes
       @document
+    end
+    
+    protected
+    def strip_mail_chimp_attributes
+      @document.xpath('//*').each { |e| e.attributes.each { |k,v| v.remove if k =~ /^mc/ } }
     end
   end
 end
 
-describe ChimpContact::StripMailChimpAttributes do
+describe ChimpContact::Convertor do
   
-  let :strip_mail_chimp_attributes do
-    ChimpContact::StripMailChimpAttributes.new(
-      Nokogiri::HTML("<a href='#' mc:editable='link'></a>")
-    )
+  let :convertor do
+    ChimpContact::Convertor.new(Nokogiri::HTML("<a href='#' mc:editable='link'></a>"))
   end
 
+  subject {convertor.convert.to_html}
+
   it 'should find attributes that start with mc: and remove them' do
-    strip_mail_chimp_attributes.run.to_html.should include('<a href="#"></a>')
+    should include('<a href="#"></a>')
   end
 end
