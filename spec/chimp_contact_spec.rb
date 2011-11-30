@@ -12,9 +12,10 @@ module ChimpContact
       'contact legal@constantcontact.com.'
     ]
     
-    def initialize(document, params = {})
+    def initialize(document, options = {})
       @document = document
-      @params = params
+      @params   = options[:params] || {}
+      @title    = options[:title]  || "Newsletter"
     end
     
     def convert
@@ -22,6 +23,7 @@ module ChimpContact
       insert_copyright
       remove_footer
       add_url_parameters
+      replace_title
       @document
     end
     
@@ -48,6 +50,11 @@ module ChimpContact
         @document.xpath('//@href').each { |e| e.value += "?#{param_string}" unless e.value == "" }
       end
     end
+    
+    def replace_title
+      title_tag = @document.at_xpath('//title')
+      title_tag.content = @title
+    end
   end
 end
 
@@ -55,10 +62,11 @@ describe ChimpContact::Convertor do
   
   let :convertor do
     ChimpContact::Convertor.new(Nokogiri::HTML(%Q{
+      <title>shitty mailchimp tag of doob</title>
       <a href="" mc:editable='link'></a>
       <div id='footer'></div>
       <a href="http://www.google.co.uk"></a>
-    }), :param1 => 1, :param2 => 1)
+    }), :params => {:param1 => 1, :param2 => 1})
   end
 
   subject {convertor.convert.to_html}
@@ -77,5 +85,9 @@ describe ChimpContact::Convertor do
   
   it 'should add ?param1=1&param2=1 to the end of all urls' do
     should include('<a href="http://www.google.co.uk?param1=1&amp;param2=1"></a>')
+  end
+  
+  it 'should replace the title tag' do
+    should include('<title>Newsletter</title>')
   end
 end
