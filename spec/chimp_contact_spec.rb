@@ -1,18 +1,27 @@
+require 'nokogiri'
+
 module ChimpContact
   
-  class StripMailChimpAttributes
-    
+  class Convertor
     def initialize(document)
       @document = document
-    end
-    
-    def perform
+    end  
+  end
+  
+  class StripMailChimpAttributes < Convertor
+    def convert
+      @document.gsub(/mc:.+=["|'].+["|']/, "")
     end
   end
 end
 
 describe ChimpContact::StripMailChimpAttributes do
-
-  it 'should find attributes that start with mc: and strip them'
   
+  before do
+    @smc = ChimpContact::StripMailChimpAttributes.new("<a href='#' mc:editable='link'></a>")
+  end
+
+  it 'should find attributes that start with mc: and remove them' do
+    @smc.convert.should eql("<a href='#' ></a>")
+  end
 end
