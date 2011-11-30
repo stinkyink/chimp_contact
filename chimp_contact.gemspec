@@ -20,5 +20,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec"
   # specify any dependencies here; for example:
-  # s.add_runtime_dependency "rest-client"
+  s.add_runtime_dependency "hominid"
+  s.add_runtime_dependency "nokogiri"
 end
