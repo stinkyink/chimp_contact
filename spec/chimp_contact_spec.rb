@@ -12,14 +12,16 @@ module ChimpContact
       'contact legal@constantcontact.com.'
     ]
     
-    def initialize(document)
+    def initialize(document, params = {})
       @document = document
+      @params = params
     end
     
     def convert
       strip_mail_chimp_attributes
       insert_copyright
       remove_footer
+      add_url_parameters
       @document
     end
     
@@ -39,19 +41,30 @@ module ChimpContact
       footer = @document.css("#footer")
       footer.remove
     end
+    
+    def add_url_parameters
+      unless @params.empty?
+        param_string = @params.inject([]){|result, param| result << "#{param[0]}=#{param[1]}"; result}.join("&")
+        @document.xpath('//@href').each { |e| e.value += "?#{param_string}" unless e.value == "" }
+      end
+    end
   end
 end
 
 describe ChimpContact::Convertor do
   
   let :convertor do
-    ChimpContact::Convertor.new(Nokogiri::HTML("<a href='#' mc:editable='link'></a><div id='footer'>"))
+    ChimpContact::Convertor.new(Nokogiri::HTML(%Q{
+      <a href="" mc:editable='link'></a>
+      <div id='footer'></div>
+      <a href="http://www.google.co.uk"></a>
+    }), :param1 => 1, :param2 => 1)
   end
 
   subject {convertor.convert.to_html}
 
   it 'should find attributes that start with mc: and remove them' do
-    should include('<a href="#"></a>')
+    should include('<a href=""></a>')
   end
   
   it 'should add the copyright tag just after the body tag' do
@@ -60,5 +73,9 @@ describe ChimpContact::Convertor do
   
   it 'should remove the footer div' do
     should_not include('<div id="footer">')
+  end
+  
+  it 'should add ?param1=1&param2=1 to the end of all urls' do
+    should include('<a href="http://www.google.co.uk?param1=1&amp;param2=1"></a>')
   end
 end
