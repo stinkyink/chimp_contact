@@ -9,19 +9,22 @@ module ChimpContact
   end
   
   class StripMailChimpAttributes < Convertor
-    def convert
-      @document.gsub(/mc:.+=["|'].+["|']/, "")
+    def run
+      @document.xpath('//*').each { |e| e.attributes.each { |k,v| v.remove if k =~ /^mc/ } }
+      @document
     end
   end
 end
 
 describe ChimpContact::StripMailChimpAttributes do
   
-  before do
-    @smc = ChimpContact::StripMailChimpAttributes.new("<a href='#' mc:editable='link'></a>")
+  let :strip_mail_chimp_attributes do
+    ChimpContact::StripMailChimpAttributes.new(
+      Nokogiri::HTML("<a href='#' mc:editable='link'></a>")
+    )
   end
 
   it 'should find attributes that start with mc: and remove them' do
-    @smc.convert.should eql("<a href='#' ></a>")
+    strip_mail_chimp_attributes.run.to_html.should include('<a href="#"></a>')
   end
 end
