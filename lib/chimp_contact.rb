@@ -1,5 +1,5 @@
+require 'nokogiri'
+require 'hominid'
 require "chimp_contact/version"
-
-module ChimpContact
-  # Your code goes here...
-end
+require "chimp_contact/template"
+require "chimp_contact/converter"
