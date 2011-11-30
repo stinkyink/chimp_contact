@@ -66,10 +66,12 @@ describe ChimpContact::Convertor do
       <a href="" mc:editable='link'></a>
       <div id='footer'></div>
       <a href="http://www.google.co.uk"></a>
+      <img src="image.jpg">
+      <br>
     }), :params => {:param1 => 1, :param2 => 1})
   end
 
-  subject {convertor.convert.to_html}
+  subject {convertor.convert.to_xhtml}
 
   it 'should find attributes that start with mc: and remove them' do
     should include('<a href=""></a>')
@@ -89,5 +91,15 @@ describe ChimpContact::Convertor do
   
   it 'should replace the title tag' do
     should include('<title>Newsletter</title>')
+  end
+
+  context "converting to XHTML" do
+    it 'should close img tags' do
+      should include('<img src="image.jpg" />')
+    end
+
+    it 'should close all br tags' do
+      should include('<br />')
+    end
   end
 end
