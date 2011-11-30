@@ -21,7 +21,7 @@ module ChimpContact
     def convert
       strip_mail_chimp_attributes
       insert_copyright
-      remove_footer
+      remove_no_cc
       add_url_parameters
       replace_title
       @document
@@ -39,9 +39,9 @@ module ChimpContact
       body_tag.add_next_sibling(copyright_tag)
     end
     
-    def remove_footer
-      footer = @document.css("#footer")
-      footer.remove
+    def remove_no_cc
+      no_cc = @document.css(".no_cc")
+      no_cc.remove
     end
     
     def add_url_parameters
@@ -64,7 +64,7 @@ describe ChimpContact::Convertor do
     ChimpContact::Convertor.new(Nokogiri::HTML(%Q{
       <title>shitty mailchimp tag of doob</title>
       <a href="" mc:editable='link'></a>
-      <div id='footer'></div>
+      <div id='footer' class='no_cc'></div>
       <a href="http://www.google.co.uk"></a>
       <img src="image.jpg">
       <br>
@@ -81,8 +81,8 @@ describe ChimpContact::Convertor do
     should include("<CopyRight>")
   end
   
-  it 'should remove the footer div' do
-    should_not include('<div id="footer">')
+  it 'should remove the any element with the .no_cc class' do
+    should_not include('<div id="footer" class="no_cc">')
   end
   
   it 'should add ?param1=1&param2=1 to the end of all urls' do
