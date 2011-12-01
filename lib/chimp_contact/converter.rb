@@ -11,8 +11,8 @@ module ChimpContact
     
     def initialize(document, options = {})
       @document = document
-      @params   = options[:params] || {}
-      @title    = options[:title]  || "Newsletter"
+      @params   = options["params"] || {}
+      @title    = options["title"]  || "Newsletter"
     end
     
     def convert

@@ -1,0 +1,30 @@
+<form action="/" method="post" class="form-stacked">
+
+  <fieldset>
+    <label for="title">Subject</label>
+    <input type="text" name="title" id="title" value="" class="span8">
+  </fieldset>
+  
+  <fieldset>
+    <legend>URL Parameters</legend>
+  
+    <label>UTM Source</label>
+    <input type="text" name="params[utm_source]" value="" />
+      
+    <label>UTM Campaign</label>
+    <input type="text" name="params[utm_campaign]" value="" />
+  
+    <label>UTM Medium</label>
+    <input type="text" name="params[utm_medium]" value="" />
+  </fieldset>
+  
+  <label for="template_id">Choose a template</label>
+  <select name="template_id" class="span8">
+    <% @templates.each do |template| %>
+      <option value="<%= template[:id] %>"><%= template[:name] %></option>
+    <% end %>
+  </select>
+  <br />
+  <br />
+  <input type="submit" value="Convert Template" class="btn danger large span8" />
+</form>

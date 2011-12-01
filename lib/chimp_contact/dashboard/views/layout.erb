@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+  <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+  <title>Chimp Contact</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Chimp Contact <small>Mailchimp to constant contact template converter</small></h1>
+    
+    <div id="content" class="offset4">
+      <%= yield %>
+    </div>
+    
+    <div id="footer">
+      <p class="pull-right">Powered by <a href="http://github.com/stinkyink/chimp_contact">Chimp Contact</a> v<%=ChimpContact::VERSION %></p>
+    </div>
+  </div>
+</body>
+</html>
